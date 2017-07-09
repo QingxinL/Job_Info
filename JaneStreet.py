@@ -23,50 +23,42 @@ JSC_dict = {}
 
 from selenium import webdriver
 #driver = webdriver.Chrome()
+def getClicked(xpath,wait):
+    button = wait.until(EC.element_to_be_clickable((By.XPATH,xpath)))
+    button.click()
 
-
-def open_positions():
-    driver = webdriver.PhantomJS()
-    driver.get('https://www.janestreet.com/join-jane-street/open-positions/')
-# driver.execute_script("document.getElementByXPath('/html/body/div[4]/div[5]/div/div/div/div[2]/div[2]').sty;e.display='block';")
+def open_positions(driver):
     wait = WebDriverWait(driver,10)
 
-# button = wait.until(EC.presence_of_element_located((By.XPATH,buttonPath)))
-# driver.execute_script('arguments[0].click();',button)
-# button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME,'ult_exp_section_layer ult-adjust-bottom-margin  ')))
-# button.click()
 
 # Click the "Open Quantitative Trading Position Button"
     trading_button_path="/html/body/div[4]/div[5]/div/div/div/div[2]"
-    trading_button = wait.until(EC.element_to_be_clickable((By.XPATH,trading_button_path)))
-    trading_button.click()
-
-#
-# wait = WebDriverWait(driver, timeout=1)
-# sd_button = wait.until(EC.invisibility_of_element_located((By.XPATH,"/html/body/div[4]/div[7]/div/div/div/div[5]")))
-# sd_button.click()
+    getClicked(trading_button_path,wait)
 
 
 
 # "Open Software Development Positions & Open IT&NewWorking Position"
     sd_button_path="/html/body/div[4]/div[7]/div/div/div/div[5]"
     it_button_path="/html/body/div[4]/div[7]/div/div/div/div[7]"
-    sd_button = wait.until(EC.element_to_be_clickable((By.XPATH,sd_button_path)))
-    sd_button.click()
     # TODO: Error: Element is not clickable in Chrome, but no error with PhantomJS
 
-    it_button = wait.until(EC.element_to_be_clickable((By.XPATH,it_button_path)))
-    it_button.click()
+    getClicked(sd_button_path,wait)
+    getClicked(it_button_path,wait)
+
 
 # "Open Quantitative Research Position"
     research_button_path = "/html/body/div[4]/div[9]/div/div/div/div[5]"
-    research_button = wait.until(EC.element_to_be_clickable((By.XPATH,research_button_path)))
-    research_button.click()
+    getClicked(research_button_path,wait)
+
 
     return driver.page_source
 
+
 def jobScraping():
-    html = open_positions()
+    driver = webdriver.PhantomJS()
+    driver.get('https://www.janestreet.com/join-jane-street/open-positions/')
+
+    html = open_positions(driver)
     soup = BeautifulSoup(html,'lxml')
 
     # Get the job titles & locations
@@ -77,7 +69,30 @@ def jobScraping():
         loc = job.find_next('span',class_=re.compile('job-post-[a-z]'))
         JSC_dict['Location']=loc.text
 
-    # TODO: Website is also display:none, details (requirements) is hidden 
+        # TODO: UODATE THE DICT FOR EACH JOB 
+        getWebsite(driver) # the same with the below
+        getRequirement(driver)
+        # Website is also display:none, details (requirements) is hidden
+        # use element.get_attribute('textContent')
+        # - not actually click on the button, but only get the text inside the element
+
+
+
+    print(JSC_dict)
+
+def getRequirement(driver):
+    requirements = driver.find_elements_by_class_name('job-candidate')
+    for requirement in requirements:
+        require = requirement.get_attribute('textContent')
+        require = re.sub(pattern=r"<.*?>",repl="",string=require)
+        JSC_dict['Requirement']=require
+
+
+def getWebsite(driver):
+    webs = driver.find_elements_by_class_name('arrow-link-normal')
+    for web in webs:
+        website = web.get_attribute('href')
+        JSC_dict['Website']=website
 
 
 
