@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-# Set up Microsoft Collection
+# Set up Jane Street Collection
 client = MongoClient()
 db = client['Job_Info_Database']
 JSC = db['Jane_Street_Collection']
@@ -61,6 +61,10 @@ def jobScraping():
     html = open_positions(driver)
     soup = BeautifulSoup(html,'lxml')
 
+
+    websiteList = getWebsite(driver) # the same with the below
+    requireList = getRequirement(driver)
+
     # Get the job titles & locations
     jobs = soup.findAll('h4',class_='job-title')
     for job in jobs:
@@ -68,33 +72,29 @@ def jobScraping():
         JSC_dict['Title']=job.text
         loc = job.find_next('span',class_=re.compile('job-post-[a-z]'))
         JSC_dict['Location']=loc.text
+        JSC_dict['Website']=websiteList[0]
+        websiteList.pop(0)
+        JSC_dict['Requirement']=requireList[0]
+        requireList.pop(0)
+        #print(JSC_dict)
+        JSC.update(spec=JSC_dict,document=JSC_dict,upsert=True)
 
-        # TODO: UODATE THE DICT FOR EACH JOB
-        getWebsite(driver) # the same with the below
-        getRequirement(driver)
-        # Website is also display:none, details (requirements) is hidden
-        # use element.get_attribute('textContent')
-        # - not actually click on the button, but only get the text inside the element
-
-
-
-    print(JSC_dict)
 
 def getRequirement(driver):
+    require_list=[]
     requirements = driver.find_elements_by_class_name('job-candidate')
     for requirement in requirements:
         require = requirement.get_attribute('textContent')
         require = re.sub(pattern=r"<.*?>",repl="",string=require)
-        JSC_dict['Requirement']=require
+        require_list.append(require)
+    return require_list
 
 
 def getWebsite(driver):
+    website_list=[]
     webs = driver.find_elements_by_class_name('arrow-link-normal')
     for web in webs:
         website = web.get_attribute('href')
-        JSC_dict['Website']=website
+        website_list.append(website)
+    return website_list
 
-
-
-
-jobScraping()
