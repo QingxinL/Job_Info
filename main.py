@@ -12,11 +12,22 @@ another file with specific requirements'''
 
 '''Second Revised Idea: Use Database not files - MongoDB'''
 
+# TODO: AUTOMATIC RUN THE SCRIPT ON DAILY BASIS - USE Launchd
+# TODO: Update the database (run the program) every day
 
-from TwoSigma import *
 
+
+import TwoSigma
+import HRT
+import JaneStreet
 
 # Two Sigma:
 execution_trading ='https://careers.twosigma.com/careers/SearchJobs/?3_33_3=%5B%22897%22%5D&jobOffset=0'
-jobScraping(execution_trading)
+TwoSigma.jobScraping(execution_trading)
+
+# Hudson River Trading:
+iframe_url = 'https://boards.greenhouse.io/embed/job_board?for=wehrtyou&b=http://www.hudson-trading.com/careers/'
+HRT.job_Scraping(iframe_url)
+
+JaneStreet.jobScraping()
 
