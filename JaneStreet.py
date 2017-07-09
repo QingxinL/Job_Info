@@ -69,7 +69,7 @@ def jobScraping():
         loc = job.find_next('span',class_=re.compile('job-post-[a-z]'))
         JSC_dict['Location']=loc.text
 
-        # TODO: UODATE THE DICT FOR EACH JOB 
+        # TODO: UODATE THE DICT FOR EACH JOB
         getWebsite(driver) # the same with the below
         getRequirement(driver)
         # Website is also display:none, details (requirements) is hidden
