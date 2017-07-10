@@ -79,8 +79,9 @@ def jobScraping():
         #print(JSC_dict)
         JSC.update(spec=JSC_dict,document=JSC_dict,upsert=True)
 
+    driver.quit()
 
-def getRequirement(driver):
+def getRequirement(driver): # get the requirement directly from the 'display:none' (the website)
     require_list=[]
     requirements = driver.find_elements_by_class_name('job-candidate')
     for requirement in requirements:
