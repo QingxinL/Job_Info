@@ -9,11 +9,12 @@ import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
-
+# Auto run the program / Update the Job_Info_Database every 12 hours
 scheduler = BlockingScheduler()
-@scheduler.scheduled_job('interval',minutes=5)
+@scheduler.scheduled_job('interval',hours=12)
 
 def updateDatabase():
+    print(datetime.datetime.now())
 # Two Sigma:
     execution_trading ='https://careers.twosigma.com/careers/SearchJobs/?3_33_3=%5B%22897%22%5D&jobOffset=0'
     TwoSigma.jobScraping(execution_trading)
