@@ -1,7 +1,7 @@
 # Job_Info
 A Python Project aimed to web crawl different companies' websites to gather the job information and store data into database.
 </br>
-Companies Include: Two Sigma, Jane Street Capital, Hudson River Trading, ...(In Process adding more)
+Companies Include: Two Sigma, Jane Street Capital, Hudson River Trading, ...(In Process adding more) </br>
 Information Include: Job Title, Location, Website, and Requirements 
 
 # Built With
